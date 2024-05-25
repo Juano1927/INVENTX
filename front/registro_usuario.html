@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Usuario</title>
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background-image: url('imagenes/BAR3.jpeg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            color: white;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <img src="imagenes/logo.JPG" alt="Logo" style="width: 200px;">
+    </div>
+    <h1>Registro de Usuario</h1>
+    <form id="usuarioForm">
+        <label for="cedula">Cédula:</label>
+        <input type="text" id="cedula" name="cedula" required><br>
+
+        <label for="nombre">Nombre:</label>
+        <input type="text" id="nombre" name="nombre" required><br>
+
+        <label for="nombre_usuario">Nombre de Usuario:</label>
+        <input type="text" id="nombre_usuario" name="nombre_usuario" required><br>
+
+        <label for="contrasena">Contraseña:</label>
+        <input type="password" id="contrasena" name="contrasena" required><br>
+
+        <label for="telefono_movil">Teléfono Móvil:</label>
+        <input type="text" id="telefono_movil" name="telefono_movil" required><br>
+
+        <button type="submit">Registrar</button>
+    </form>
+
+    <script>
+        document.getElementById('usuarioForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData.entries());
+
+            fetch('http://localhost:3000/guardar-datos-usuario', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.mensaje);
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>

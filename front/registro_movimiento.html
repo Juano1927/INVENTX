@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Registro de Movimientos</title>
+<link rel="stylesheet" href="movimientos.css">
+<style>
+    body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        margin: 0;
+        background-image: url('imagenes/BAR3.jpeg');
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+        color: white;
+        text-align: center;
+    }
+
+    .container {
+        margin-top: 20px; /* Ajusta el margen superior según sea necesario */
+    }
+
+    .logo {
+        width: 200px; /* Ajusta el tamaño según sea necesario */
+    }
+</style>
+</head>
+<body>
+<div>
+    <img src="imagenes/logo.JPG" alt="Logo" class="logo">
+</div>
+<div class="container">
+  <h2>Registro de Movimientos de Productos INVENTX</h2>
+
+  <form id="Movimientos" method="post" action="/guardar-datos-movimiento">
+    <div class="form-group">
+      <label for="id_producto">Producto:</label>
+      <select id="id_producto" name="id_producto" required>
+        <!-- Opciones de productos se cargarán dinámicamente desde la base de datos -->
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="cedula_usuario">Cédula del Usuario:</label>
+      <select id="cedula_usuario" name="cedula_usuario" required>
+        <!-- Opciones de usuarios se cargarán dinámicamente desde la base de datos -->
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="tipo">Tipo de Movimiento:</label>
+      <select id="tipo" name="tipo" required>
+        <option value="entrada">Entrada</option>
+        <option value="salida">Salida</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="cantidad">Cantidad:</label>
+      <input type="number" id="cantidad" name="cantidad" required>
+    </div>
+    <div class="form-group">
+      <label for="fecha">Fecha:</label>
+      <input type="datetime-local" id="fecha" name="fecha" required>
+    </div>
+    <button type="submit" id="registrarMov">Registrar Movimiento</button>
+  </form>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        fetch('http://localhost:3000/productos')
+            .then(response => response.json())
+            .then(productos => {
+                const selectProducto = document.getElementById('id_producto');
+                productos.forEach(producto => {
+                    const option = document.createElement('option');
+                    option.value = producto.id_producto;
+                    option.textContent = producto.nombre_producto;
+                    selectProducto.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error cargando productos:', error));
+
+        fetch('http://localhost:3000/usuarios')
+            .then(response => response.json())
+            .then(usuarios => {
+                const selectUsuario = document.getElementById('cedula_usuario');
+                usuarios.forEach(usuario => {
+                    const option = document.createElement('option');
+                    option.value = usuario.cedula;
+                    option.textContent = usuario.nombre;
+                    selectUsuario.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error cargando usuarios:', error));
+    });
+
+    document.getElementById('Movimientos').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const formData = new FormData(this);
+        const data = Object.fromEntries(formData.entries());
+
+        fetch('http://localhost:3000/guardar-datos-movimiento', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.mensaje);
+        })
+        .catch(error => console.error('Error:', error));
+    });
+</script>
+
+</body>
+</html>

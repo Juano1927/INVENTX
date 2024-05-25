@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta de Productos</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background-image: url('imagenes/BAR3.jpeg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            color: black;
+            text-align: center;
+        }
+
+        .logo {
+            width: 200px; /* Ajusta el tamaño según sea necesario */
+            margin-top: 20px; /* Ajusta el margen superior según sea necesario */
+        }
+    </style>
+    <script>
+        async function obtenerProductos() {
+            try {
+                const response = await fetch('http://localhost:3000/todos-productos');
+                const productos = await response.json();
+                mostrarProductos(productos);
+            } catch (error) {
+                console.error('Error obteniendo los productos:', error);
+            }
+        }
+
+        function mostrarProductos(productos) {
+            const resultadosDiv = document.getElementById('resultados');
+            resultadosDiv.innerHTML = '';
+
+            if (productos.length === 0) {
+                resultadosDiv.innerHTML = '<p>No se encontraron productos.</p>';
+                return;
+            }
+
+            const table = document.createElement('table');
+            table.className = 'report-table';
+
+            const headerRow = document.createElement('tr');
+            headerRow.className = 'report-tr';
+            const headers = ['ID Producto', 'Nombre Producto', 'Cantidad', 'Precio'];
+            headers.forEach(headerText => {
+                const header = document.createElement('th');
+                header.className = 'report-th';
+                header.textContent = headerText;
+                headerRow.appendChild(header);
+            });
+            table.appendChild(headerRow);
+
+            productos.forEach(producto => {
+                const row = document.createElement('tr');
+                row.className = 'report-tr';
+
+                const cellIdProducto = document.createElement('td');
+                cellIdProducto.className = 'report-td';
+                cellIdProducto.textContent = producto.id_producto;
+                row.appendChild(cellIdProducto);
+
+                const cellNombreProducto = document.createElement('td');
+                cellNombreProducto.className = 'report-td';
+                cellNombreProducto.textContent = producto.nombre_producto;
+                row.appendChild(cellNombreProducto);
+
+                const cellCantidad = document.createElement('td');
+                cellCantidad.className = 'report-td';
+                cellCantidad.textContent = producto.cantidad;
+                row.appendChild(cellCantidad);
+
+                const cellPrecio = document.createElement('td');
+                cellPrecio.className = 'report-td';
+                cellPrecio.textContent = producto.precio;
+                row.appendChild(cellPrecio);
+
+                table.appendChild(row);
+            });
+
+            resultadosDiv.appendChild(table);
+        }
+
+        document.addEventListener('DOMContentLoaded', obtenerProductos);
+    </script>
+</head>
+<body>
+    <div>
+        <img src="imagenes/logo.JPG" alt="Logo" class="logo">
+    </div>
+    <div class="report-container">
+        <h1 class="report-header">Consulta de Productos</h1>
+        <div id="resultados"></div>
+    </div>
+    <p>&copy; X Developer Team 2024</p>
+</body>
+</html>

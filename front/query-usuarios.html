@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta de Usuarios</title>
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        async function obtenerUsuarios() {
+            try {
+                const response = await fetch('http://localhost:3000/reporte-usuarios');
+                const usuarios = await response.json();
+                mostrarUsuarios(usuarios);
+            } catch (error) {
+                console.error('Error obteniendo los usuarios:', error);
+            }
+        }
+
+        async function eliminarUsuario(cedula) {
+            try {
+                const response = await fetch(`http://localhost:3000/usuarios/${cedula}`, {
+                    method: 'DELETE'
+                });
+                if (response.ok) {
+                    obtenerUsuarios();
+                } else {
+                    console.error('Error eliminando el usuario:', response.statusText);
+                }
+            } catch (error) {
+                console.error('Error eliminando el usuario:', error);
+            }
+        }
+
+        function editarUsuario(usuario) {
+            const nombre = prompt('Ingrese el nuevo nombre:', usuario.nombre);
+            const nombre_usuario = prompt('Ingrese el nuevo nombre de usuario:', usuario.nombre_usuario);
+            const telefono_movil = prompt('Ingrese el nuevo teléfono móvil:', usuario.telefono_movil);
+            if (nombre && nombre_usuario && telefono_movil) {
+                actualizarUsuario(usuario.cedula, { nombre, nombre_usuario, telefono_movil });
+            }
+        }
+
+        async function actualizarUsuario(cedula, datos) {
+            try {
+                const response = await fetch(`http://localhost:3000/usuarios/${cedula}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(datos)
+                });
+                if (response.ok) {
+                    obtenerUsuarios();
+                } else {
+                    console.error('Error actualizando el usuario:', response.statusText);
+                }
+            } catch (error) {
+                console.error('Error actualizando el usuario:', error);
+            }
+        }
+
+        function mostrarUsuarios(usuarios) {
+            const resultadosDiv = document.getElementById('resultados');
+            resultadosDiv.innerHTML = '';
+
+            if (usuarios.length === 0) {
+                resultadosDiv.innerHTML = '<p>No se encontraron usuarios.</p>';
+                return;
+            }
+
+            const table = document.createElement('table');
+
+            const headerRow = document.createElement('tr');
+            const headers = ['Cédula', 'Nombre', 'Nombre de Usuario', 'Teléfono Móvil', 'Acciones'];
+            headers.forEach(headerText => {
+                const header = document.createElement('th');
+                header.textContent = headerText;
+                headerRow.appendChild(header);
+            });
+            table.appendChild(headerRow);
+
+            usuarios.forEach(usuario => {
+                const row = document.createElement('tr');
+
+                const cellCedula = document.createElement('td');
+                cellCedula.textContent = usuario.cedula;
+                row.appendChild(cellCedula);
+
+                const cellNombre = document.createElement('td');
+                cellNombre.textContent = usuario.nombre;
+                row.appendChild(cellNombre);
+
+                const cellNombreUsuario = document.createElement('td');
+                cellNombreUsuario.textContent = usuario.nombre_usuario;
+                row.appendChild(cellNombreUsuario);
+
+                const cellTelefonoMovil = document.createElement('td');
+                cellTelefonoMovil.textContent = usuario.telefono_movil;
+                row.appendChild(cellTelefonoMovil);
+
+                const cellAcciones = document.createElement('td');
+
+                const btnEliminar = document.createElement('button');
+                btnEliminar.textContent = 'Eliminar';
+                btnEliminar.onclick = () => eliminarUsuario(usuario.cedula);
+                cellAcciones.appendChild(btnEliminar);
+
+                const btnEditar = document.createElement('button');
+                btnEditar.textContent = 'Editar';
+                btnEditar.onclick = () => editarUsuario(usuario);
+                cellAcciones.appendChild(btnEditar);
+
+                row.appendChild(cellAcciones);
+
+                table.appendChild(row);
+            });
+
+            resultadosDiv.appendChild(table);
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Consulta de Usuarios</h1>
+        <button onclick="obtenerUsuarios()">Generar Reporte</button>
+        <div id="resultados"></div>
+    </div>
+</body>
+</html>
