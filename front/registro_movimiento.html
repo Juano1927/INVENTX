@@ -27,6 +27,31 @@
     .logo {
         width: 200px; /* Ajusta el tamaño según sea necesario */
     }
+
+    .home-button, .register-button {
+        margin-top: 20px; /* Añade un margen superior para separar los botones del formulario */
+        background-color: #4CAF50; /* Color de fondo del botón */
+        color: white; /* Color del texto del botón */
+        border: none; /* Sin bordes */
+        padding: 10px 20px; /* Relleno del botón */
+        text-align: center; /* Alineación del texto */
+        text-decoration: none; /* Sin subrayado */
+        display: inline-block; /* Mostrar en línea */
+        font-size: 16px; /* Tamaño de la fuente */
+        margin: 4px 2px; /* Margen alrededor del botón */
+        cursor: pointer; /* Cambiar el cursor al pasar sobre el botón */
+        border-radius: 16px; /* Bordes redondeados */
+    }
+
+    .home-button {
+        background-color: #008CBA; /* Color de fondo del botón Home */
+    }
+
+    .button-container {
+        display: flex;
+        justify-content: center;
+        gap: 10px; /* Espacio entre los botones */
+    }
 </style>
 </head>
 <body>
@@ -64,10 +89,12 @@
       <label for="fecha">Fecha:</label>
       <input type="datetime-local" id="fecha" name="fecha" required>
     </div>
-    <button type="submit" id="registrarMov">Registrar Movimiento</button>
+    <div class="button-container">
+      <button type="submit" id="registrarMov" class="register-button">Registrar Movimiento</button>
+      <a href="inicio.html" class="home-button">Home</a>
+    </div>
   </form>
 </div>
-
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         fetch('http://localhost:3000/productos')

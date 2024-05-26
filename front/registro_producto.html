@@ -18,6 +18,28 @@
             color: white;
             text-align: center;
         }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px; /* Añade un margen superior para separar los botones del formulario */
+        }
+        .button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 16px;
+        }
+        .home-button {
+            background-color: #008CBA; /* Color de fondo del botón Home */
+        }
     </style>
 </head>
 <body>
@@ -34,7 +56,10 @@
         <input type="number" id="cantidad" name="cantidad" required><br>
         <label for="precio">Precio:</label>
         <input type="number" id="precio" name="precio" required><br>
-        <button type="submit">Registrar</button>
+        <div class="button-container">
+            <button type="submit" class="button">Registrar</button>
+            <a href="inicio.html" class="button home-button">Home</a>
+        </div>
     </form>
 
     <script>
