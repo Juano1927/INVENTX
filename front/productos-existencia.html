@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Productos con Existencia entre 0 y 5</title>
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        async function obtenerProductos() {
+            try {
+                const response = await fetch('http://localhost:3000/productos-existencia');
+                const productos = await response.json();
+                mostrarProductos(productos);
+            } catch (error) {
+                console.error('Error obteniendo los productos con existencia entre 0 y 5:', error);
+            }
+        }
+
+        function mostrarProductos(productos) {
+            const resultadosDiv = document.getElementById('resultados');
+            resultadosDiv.innerHTML = '';
+
+            if (productos.length === 0) {
+                resultadosDiv.innerHTML = '<p>No se encontraron productos con existencia entre 0 y 5.</p>';
+                return;
+            }
+
+            const table = document.createElement('table');
+            table.className = 'report-table';
+
+            const headerRow = document.createElement('tr');
+            headerRow.className = 'report-tr';
+            const headers = ['ID Producto', 'Nombre Producto', 'Existencia Total'];
+            headers.forEach(headerText => {
+                const header = document.createElement('th');
+                header.className = 'report-th';
+                header.textContent = headerText;
+                headerRow.appendChild(header);
+            });
+            table.appendChild(headerRow);
+
+            productos.forEach(producto => {
+                const row = document.createElement('tr');
+                row.className = 'report-tr';
+
+                const cellIdProducto = document.createElement('td');
+                cellIdProducto.className = 'report-td';
+                cellIdProducto.textContent = producto.id_producto;
+                row.appendChild(cellIdProducto);
+
+                const cellNombreProducto = document.createElement('td');
+                cellNombreProducto.className = 'report-td';
+                cellNombreProducto.textContent = producto.nombre_producto;
+                row.appendChild(cellNombreProducto);
+
+                const cellExistenciaTotal = document.createElement('td');
+                cellExistenciaTotal.className = 'report-td';
+                cellExistenciaTotal.textContent = producto.existencia_total;
+                row.appendChild(cellExistenciaTotal);
+
+                table.appendChild(row);
+            });
+
+            resultadosDiv.appendChild(table);
+        }
+
+        window.onload = obtenerProductos;
+    </script>
+</head>
+<body>
+    <div class="report-container">
+        <h1 class="report-header">Productos con Existencia entre 0 y 5 <!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Productos con Existencia entre 0 y 5</title>
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        async function obtenerProductos() {
+            try {
+                const response = await fetch('http://localhost:3000/productos-existencia');
+                const productos = await response.json();
+                mostrarProductos(productos);
+            } catch (error) {
+                console.error('Error obteniendo los productos con existencia entre 0 y 5:', error);
+            }
+        }
+
+        function mostrarProductos(productos) {
+            const resultadosDiv = document.getElementById('resultados');
+            resultadosDiv.innerHTML = '';
+
+            if (productos.length === 0) {
+                resultadosDiv.innerHTML = '<p>No se encontraron productos con existencia entre 0 y 5.</p>';
+                return;
+            }
+
+            const table = document.createElement('table');
+            table.className = 'report-table';
+
+            const headerRow = document.createElement('tr');
+            headerRow.className = 'report-tr';
+            const headers = ['ID Producto', 'Nombre Producto', 'Existencia Total'];
+            headers.forEach(headerText => {
+                const header = document.createElement('th');
+                header.className = 'report-th';
+                header.textContent = headerText;
+                headerRow.appendChild(header);
+            });
+            table.appendChild(headerRow);
+
+            productos.forEach(producto => {
+                const row = document.createElement('tr');
+                row.className = 'report-tr';
+
+                const cellIdProducto = document.createElement('td');
+                cellIdProducto.className = 'report-td';
+                cellIdProducto.textContent = producto.id_producto;
+                row.appendChild(cellIdProducto);
+
+                const cellNombreProducto = document.createElement('td');
+                cellNombreProducto.className = 'report-td';
+                cellNombreProducto.textContent = producto.nombre_producto;
+                row.appendChild(cellNombreProducto);
+
+                const cellExistenciaTotal = document.createElement('td');
+                cellExistenciaTotal.className = 'report-td';
+                cellExistenciaTotal.textContent = producto.existencia_total;
+                row.appendChild(cellExistenciaTotal);
+
+                table.appendChild(row);
+            });
+
+            resultadosDiv.appendChild(table);
+        }
+
+        window.onload = obtenerProductos;
+    </script>
+</head>
+<body>
+    <div class="report-container">
+        <h1 class="report-header">Productos con Existencia entre 0 y 5 INVENTX</h1>
+        <div id="resultados"></div>
+    </div>
+</body>
+</html>
+</h1>
+        <div id="resultados"></div>
+    </div>
+</body>
+</html>

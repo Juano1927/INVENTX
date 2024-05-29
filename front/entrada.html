@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movimientos de Entrada</title>
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        async function obtenerMovimientos() {
+            const fechaInicio = document.getElementById('fechaInicio').value;
+            const fechaFin = document.getElementById('fechaFin').value;
+
+            if (!fechaInicio || !fechaFin) {
+                alert('Por favor, ingrese ambas fechas.');
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:3000/query-entrada?fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`);
+                const movimientos = await response.json();
+                mostrarMovimientos(movimientos);
+            } catch (error) {
+                console.error('Error obteniendo los movimientos de entrada:', error);
+            }
+        }
+
+        function mostrarMovimientos(movimientos) {
+            const resultadosDiv = document.getElementById('resultados');
+            resultadosDiv.innerHTML = '';
+
+            if (movimientos.length === 0) {
+                resultadosDiv.innerHTML = '<p>No se encontraron movimientos de entrada en el rango de fechas proporcionado.</p>';
+                return;
+            }
+
+            const table = document.createElement('table');
+            table.className = 'report-table';
+
+            const headerRow = document.createElement('tr');
+            headerRow.className = 'report-tr';
+            const headers = ['ID Producto', 'Nombre Producto', 'Cédula Usuario', 'Nombre Usuario', 'Tipo Movimiento', 'Cantidad', 'Fecha'];
+            headers.forEach(headerText => {
+                const header = document.createElement('th');
+                header.className = 'report-th';
+                header.textContent = headerText;
+                headerRow.appendChild(header);
+            });
+            table.appendChild(headerRow);
+
+            movimientos.forEach(movimiento => {
+                const row = document.createElement('tr');
+                row.className = 'report-tr';
+
+                const cellIdProducto = document.createElement('td');
+                cellIdProducto.className = 'report-td';
+                cellIdProducto.textContent = movimiento.id_producto;
+                row.appendChild(cellIdProducto);
+
+                const cellNombreProducto = document.createElement('td');
+                cellNombreProducto.className = 'report-td';
+                cellNombreProducto.textContent = movimiento.nombre_producto;
+                row.appendChild(cellNombreProducto);
+
+                const cellCedulaUsuario = document.createElement('td');
+                cellCedulaUsuario.className = 'report-td';
+                cellCedulaUsuario.textContent = movimiento.cedula_usuario;
+                row.appendChild(cellCedulaUsuario);
+
+                const cellNombreUsuario = document.createElement('td');
+                cellNombreUsuario.className = 'report-td';
+                cellNombreUsuario.textContent = movimiento.nombre_usuario;
+                row.appendChild(cellNombreUsuario);
+
+                const cellTipoMovimiento = document.createElement('td');
+                cellTipoMovimiento.className = 'report-td';
+                cellTipoMovimiento.textContent = movimiento.tipo_movimiento;
+                row.appendChild(cellTipoMovimiento);
+
+                const cellCantidad = document.createElement('td');
+                cellCantidad.className = 'report-td';
+                cellCantidad.textContent = movimiento.cantidad;
+                row.appendChild(cellCantidad);
+
+                const cellFecha = document.createElement('td');
+                cellFecha.className = 'report-td';
+                cellFecha.textContent = new Date(movimiento.fecha).toLocaleString();
+                row.appendChild(cellFecha);
+
+                table.appendChild(row);
+            });
+
+            resultadosDiv.appendChild(table);
+        }
+
+        async function exportarExcel() {
+            const fechaInicio = document.getElementById('fechaInicio').value;
+            const fechaFin = document.getElementById('fechaFin').value;
+
+            if (!fechaInicio || !fechaFin) {
+                alert('Por favor, ingrese ambas fechas.');
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:3000/exportar-entrada?fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`);
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'movimientos_entrada.xlsx';
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+            } catch (error) {
+                console.error('Error exportando el reporte a Excel:', error);
+            }
+        }
+
+        window.onload = function() {
+            document.getElementById('generarReporte').addEventListener('click', function(event) {
+                event.preventDefault();
+                obtenerMovimientos();
+            });
+
+            document.getElementById('exportarExcel').addEventListener('click', function(event) {
+                event.preventDefault();
+                exportarExcel();
+            });
+        }
+    </script>
+</head>
+<body>
+    <div class="report-container">
+        <h1 class="report-header">Movimientos de Entrada</h1>
+        <form class="report-form">
+            <label class="report-label" for="fechaInicio">Fecha Inicio:</label>
+            <input class="report-input" type="date" id="fechaInicio" name="fechaInicio" required>
+            <label class="report-label" for="fechaFin">Fecha Fin:</label>
+            <input class="report-input" type="date" id="fechaFin" name="fechaFin" required>
+            <button class="report-button" id="generarReporte">Generar Reporte</button>
+            <button class="report-button" id="exportarExcel">Exportar a Excel</button>
+        </form>
+        <div id="resultados"></div>
+    </div>
+</body>
+</html>

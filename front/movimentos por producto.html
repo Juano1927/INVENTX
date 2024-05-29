@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte de Movimientos de Productos</title>
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        async function obtenerProductos() {
+            try {
+                const response = await fetch('http://localhost:3000/productos');
+                const productos = await response.json();
+                const productoSelect = document.getElementById('producto');
+                productos.forEach(producto => {
+                    const option = document.createElement('option');
+                    option.value = producto.id;
+                    option.textContent = producto.nombre;
+                    productoSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error obteniendo los productos:', error);
+            }
+        }
+
+        async function obtenerReporte() {
+            const fechaInicio = document.getElementById('fechaInicio').value;
+            const fechaFin = document.getElementById('fechaFin').value;
+            const productoId = document.getElementById('producto').value;
+
+            if (!fechaInicio || !fechaFin) {
+                alert('Por favor, ingrese ambas fechas.');
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:3000/reportes?fechaInicio=${fechaInicio}&fechaFin=${fechaFin}&productoId=${productoId}`);
+                const movimientos = await response.json();
+                mostrarMovimientos(movimientos);
+            } catch (error) {
+                console.error('Error obteniendo los movimientos:', error);
+            }
+        }
+
+        function mostrarMovimientos(movimientos) {
+            const resultadosDiv = document.getElementById('resultados');
+            resultadosDiv.innerHTML = '';
+
+            if (movimientos.length === 0) {
+                resultadosDiv.innerHTML = '<p>No se encontraron movimientos en el rango de fechas proporcionado.</p>';
+                return;
+            }
+
+            const table = document.createElement('table');
+            table.className = 'report-table';
+
+            const headerRow = document.createElement('tr');
+            headerRow.className = 'report-tr';
+            const headers = ['ID Producto', 'Cédula Usuario', 'Tipo Movimiento', 'Cantidad', 'Fecha'];
+            headers.forEach(headerText => {
+                const header = document.createElement('th');
+                header.className = 'report-th';
+                header.textContent = headerText;
+                headerRow.appendChild(header);
+            });
+            table.appendChild(headerRow);
+
+            movimientos.forEach(movimiento => {
+                const row = document.createElement('tr');
+                row.className = 'report-tr';
+
+                const cellIdProducto = document.createElement('td');
+                cellIdProducto.className = 'report-td';
+                cellIdProducto.textContent = movimiento.id_producto;
+                row.appendChild(cellIdProducto);
+
+                const cellCedulaUsuario = document.createElement('td');
+                cellCedulaUsuario.className = 'report-td';
+                cellCedulaUsuario.textContent = movimiento.cedula_usuario;
+                row.appendChild(cellCedulaUsuario);
+
+                const cellTipoMovimiento = document.createElement('td');
+                cellTipoMovimiento.className = 'report-td';
+                cellTipoMovimiento.textContent = movimiento.tipo_movimiento;
+                row.appendChild(cellTipoMovimiento);
+
+                const cellCantidad = document.createElement('td');
+                cellCantidad.className = 'report-td';
+                cellCantidad.textContent = movimiento.cantidad;
+                row.appendChild(cellCantidad);
+
+                const cellFecha = document.createElement('td');
+                cellFecha.className = 'report-td';
+                cellFecha.textContent = new Date(movimiento.fecha).toLocaleString();
+                row.appendChild(cellFecha);
+
+                table.appendChild(row);
+            });
+
+            resultadosDiv.appendChild(table);
+        }
+
+        async function exportarExcel() {
+            const fechaInicio = document.getElementById('fechaInicio').value;
+            const fechaFin = document.getElementById('fechaFin').value;
+            const productoId = document.getElementById('producto').value;
+
+            if (!fechaInicio || !fechaFin) {
+                alert('Por favor, ingrese ambas fechas.');
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:3000/exportar-excel?fechaInicio=${fechaInicio}&fechaFin=${fechaFin}&productoId=${productoId}`);
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'reporte_movimientos.xlsx';
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+            } catch (error) {
+                console.error('Error exportando el reporte a Excel:', error);
+            }
+        }
+
+        window.onload = obtenerProductos;
+    </script>
+</head>
+<body>
+    <div class="report-container">
+        <h1 class="report-header">Reporte de Movimientos de Productos INVENTX</h1>
+        <form class="report-form" onsubmit="event.preventDefault(); obtenerReporte();">
+            <label class="report-label" for="producto">Producto:</label>
+            <select class="report-select" id="producto" name="producto" required>
+                <option value="" disabled selected>Seleccione un producto</option>
+            </select>
+            <label class="report-label" for="fechaInicio">Fecha Inicio:</label>
+            <input class="report-input" type="date" id="fechaInicio" name="fechaInicio" required>
+            <label class="report-label" for="fechaFin">Fecha Fin:</label>
+            <input class="report-input" type="date" id="fechaFin" name="fechaFin" required>
+            <button class="report-button" type="submit">Generar Reporte</button>
+            <button class="report-button" type="button" onclick="exportarExcel()">Exportar a Excel</button>
+        </form>
+        <div id="resultados"></div>
+    </div>
+</body>
+</html>
