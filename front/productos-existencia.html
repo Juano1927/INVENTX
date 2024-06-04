@@ -1,10 +1,114 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Productos con Existencia entre 0 y 5</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background-image: url('imagenes/BAR3.jpeg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        .logo-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+        .logo {
+            width: 150px;
+        }
+
+        .report-container {
+            width: 100%;
+            max-width: 800px;
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px; /* Added margin-top to space it away from the logo */
+        }
+
+        .report-header {
+            text-align: center;
+            margin-bottom: 20px;
+            color: rgb(14, 11, 6);
+            font-weight: bold;
+        }
+
+        .report-form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .report-label {
+            margin: 5px 0;
+        }
+
+        .report-input {
+            margin-bottom: 10px;
+            padding: 5px;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .report-button {
+            margin: 5px;
+            padding: 10px 20px;
+            background-color: orange;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .report-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .report-th,
+        .report-td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .report-th {
+            background-color: orange;
+            color: white;
+        }
+
+        .report-tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .report-tr:hover {
+            background-color: #ddd;
+        }
+
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 20px;
+        }
+    </style>
     <script>
         async function obtenerProductos() {
             try {
@@ -67,86 +171,17 @@
         window.onload = obtenerProductos;
     </script>
 </head>
+
 <body>
-    <div class="report-container">
-        <h1 class="report-header">Productos con Existencia entre 0 y 5 <!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Productos con Existencia entre 0 y 5</title>
-    <link rel="stylesheet" href="styles.css">
-    <script>
-        async function obtenerProductos() {
-            try {
-                const response = await fetch('http://localhost:3000/productos-existencia');
-                const productos = await response.json();
-                mostrarProductos(productos);
-            } catch (error) {
-                console.error('Error obteniendo los productos con existencia entre 0 y 5:', error);
-            }
-        }
-
-        function mostrarProductos(productos) {
-            const resultadosDiv = document.getElementById('resultados');
-            resultadosDiv.innerHTML = '';
-
-            if (productos.length === 0) {
-                resultadosDiv.innerHTML = '<p>No se encontraron productos con existencia entre 0 y 5.</p>';
-                return;
-            }
-
-            const table = document.createElement('table');
-            table.className = 'report-table';
-
-            const headerRow = document.createElement('tr');
-            headerRow.className = 'report-tr';
-            const headers = ['ID Producto', 'Nombre Producto', 'Existencia Total'];
-            headers.forEach(headerText => {
-                const header = document.createElement('th');
-                header.className = 'report-th';
-                header.textContent = headerText;
-                headerRow.appendChild(header);
-            });
-            table.appendChild(headerRow);
-
-            productos.forEach(producto => {
-                const row = document.createElement('tr');
-                row.className = 'report-tr';
-
-                const cellIdProducto = document.createElement('td');
-                cellIdProducto.className = 'report-td';
-                cellIdProducto.textContent = producto.id_producto;
-                row.appendChild(cellIdProducto);
-
-                const cellNombreProducto = document.createElement('td');
-                cellNombreProducto.className = 'report-td';
-                cellNombreProducto.textContent = producto.nombre_producto;
-                row.appendChild(cellNombreProducto);
-
-                const cellExistenciaTotal = document.createElement('td');
-                cellExistenciaTotal.className = 'report-td';
-                cellExistenciaTotal.textContent = producto.existencia_total;
-                row.appendChild(cellExistenciaTotal);
-
-                table.appendChild(row);
-            });
-
-            resultadosDiv.appendChild(table);
-        }
-
-        window.onload = obtenerProductos;
-    </script>
-</head>
-<body>
+    <div class="logo-container">
+        <img src="imagenes/logo.JPG" alt="Logo" class="logo">
+    </div>
     <div class="report-container">
         <h1 class="report-header">Productos con Existencia entre 0 y 5 INVENTX</h1>
+        <button class="btn btn-primary" onclick="window.location.href='index.html'">Home</button>
         <div id="resultados"></div>
     </div>
+    <p class="footer">&copy; X Developer Team-2024</p>
 </body>
-</html>
-</h1>
-        <div id="resultados"></div>
-    </div>
-</body>
+
 </html>

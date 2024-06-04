@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro de Producto INVENTX</title>
+    <link rel="stylesheet" href="styles.css">
     <style>
+        /* Estilos adicionales para el fondo, el logo y el pie de página */
         body {
             display: flex;
             align-items: center;
@@ -18,24 +20,33 @@
             color: white;
             text-align: center;
         }
+        .container {
+            margin-top: 20px; /* Ajusta el margen superior según sea necesario */
+            background-color: rgba(0, 0, 0, 0.3); /* Fondo semi-transparente */
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .logo {
+            width: 150px; /* Ajusta el tamaño según sea necesario */
+        }
         .button-container {
             display: flex;
             justify-content: center;
-            gap: 10px;
+            gap: 10px; /* Espacio entre los botones */
             margin-top: 20px; /* Añade un margen superior para separar los botones del formulario */
         }
         .button {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-            margin: 4px 2px;
-            cursor: pointer;
-            border-radius: 16px;
+            background-color: #4CAF50; /* Color de fondo del botón */
+            color: white; /* Color del texto del botón */
+            border: none; /* Sin bordes */
+            padding: 10px 20px; /* Relleno del botón */
+            text-align: center; /* Alineación del texto */
+            text-decoration: none; /* Sin subrayado */
+            display: inline-block; /* Mostrar en línea */
+            font-size: 16px; /* Tamaño de la fuente */
+            margin: 4px 2px; /* Margen alrededor del botón */
+            cursor: pointer; /* Cambiar el cursor al pasar sobre el botón */
+            border-radius: 16px; /* Bordes redondeados */
         }
         .home-button {
             background-color: #008CBA; /* Color de fondo del botón Home */
@@ -43,24 +54,31 @@
     </style>
 </head>
 <body>
-    <div>
-        <img src="imagenes/logo.JPG" alt="Logo" style="width: 200px;">
+    <!-- Logo -->
+    <div class="logo-container">
+        <img src="imagenes/logo.JPG" alt="Logo" class="logo">
     </div>
-    <h1>Registro de Producto</h1>
-    <form id="productoForm">
-        <label for="id_producto">id_Producto:</label>
-        <input type="text" id="id_producto" name="id_producto" required><br>
-        <label for="nombre_producto">Nombre del Producto:</label>
-        <input type="text" id="nombre_producto" name="nombre_producto" required><br>
-        <label for="cantidad"> Cantidad:</label>
-        <input type="number" id="cantidad" name="cantidad" required><br>
-        <label for="precio">Precio:</label>
-        <input type="number" id="precio" name="precio" required><br>
-        <div class="button-container">
-            <button type="submit" class="button">Registrar</button>
-            <a href="inicio.html" class="button home-button">Home</a>
-        </div>
-    </form>
+    <!-- Contenido de la página -->
+    <div class="container">
+        <h1 class="mt-5" style="color:rgb(249, 252, 100);">Registro de producto</h1>
+     
+        <form id="productoForm">
+            <label for="id_producto">id_Producto:</label>
+            <input type="text" id="id_producto" name="id_producto" required><br>
+            <label for="nombre_producto">Nombre del Producto:</label>
+            <input type="text" id="nombre_producto" name="nombre_producto" required><br>
+            <label for="cantidad"> Cantidad:</label>
+            <input type="number" id="cantidad" name="cantidad" required><br>
+            <label for="precio">Precio:</label>
+            <input type="number" id="precio" name="precio" required><br>
+            <div class="button-container">
+                <button type="submit" class="button">Registrar</button>
+                <a href="index.html" class="button home-button">Home</a>
+            </div>
+        </form>
+    </div>
+    <!-- Pie de página -->
+    <p class="footer">&copy; X Developer Team-2024</p>
 
     <script>
         document.getElementById('productoForm').addEventListener('submit', function(event) {

@@ -3,123 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reporte Total por Producto INVENTX </title>
+    <title>Reporte Total por Producto INVENTX</title>
     <link rel="stylesheet" href="styles.css">
-    <script>
-        async function obtenerReporte() {
-            const fechaInicio = document.getElementById('fechaInicio').value;
-            const fechaFin = document.getElementById('fechaFin').value;
-
-            if (!fechaInicio || !fechaFin) {
-                alert('Por favor, ingrese ambas fechas.');
-                return;
-            }
-
-            try {
-                const response = await fetch(`http://localhost:3000/reporte-total-producto?fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`);
-                const reporte = await response.json();
-                mostrarReporte(reporte);
-            } catch (error) {
-                console.error('Error obteniendo el reporte total por producto:', error);
-            }
+    <style>
+        /* Agrega estilos adicionales */
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background-image: url('imagenes/BAR3.jpeg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            color: white;
+            text-align: center;
         }
-
-        function mostrarReporte(reporte) {
-            const resultadosDiv = document.getElementById('resultados');
-            resultadosDiv.innerHTML = '';
-
-            if (reporte.length === 0) {
-                resultadosDiv.innerHTML = '<p>No se encontraron datos en el rango de fechas proporcionado.</p>';
-                return;
-            }
-
-            const table = document.createElement('table');
-            table.className = 'report-table';
-
-            const headerRow = document.createElement('tr');
-            headerRow.className = 'report-tr';
-            const headers = ['ID Producto', 'Nombre Producto', 'Total Entradas', 'Total Salidas', 'Total Final'];
-            headers.forEach(headerText => {
-                const header = document.createElement('th');
-                header.className = 'report-th';
-                header.textContent = headerText;
-                headerRow.appendChild(header);
-            });
-            table.appendChild(headerRow);
-
-            reporte.forEach(item => {
-                const row = document.createElement('tr');
-                row.className = 'report-tr';
-
-                const cellIdProducto = document.createElement('td');
-                cellIdProducto.className = 'report-td';
-                cellIdProducto.textContent = item.id_producto;
-                row.appendChild(cellIdProducto);
-
-                const cellNombreProducto = document.createElement('td');
-                cellNombreProducto.className = 'report-td';
-                cellNombreProducto.textContent = item.nombre_producto;
-                row.appendChild(cellNombreProducto);
-
-                const cellTotalEntradas = document.createElement('td');
-                cellTotalEntradas.className = 'report-td';
-                cellTotalEntradas.textContent = item.total_entradas;
-                row.appendChild(cellTotalEntradas);
-
-                const cellTotalSalidas = document.createElement('td');
-                cellTotalSalidas.className = 'report-td';
-                cellTotalSalidas.textContent = item.total_salidas;
-                row.appendChild(cellTotalSalidas);
-
-                const cellTotalFinal = document.createElement('td');
-                cellTotalFinal.className = 'report-td';
-                cellTotalFinal.textContent = item.total_final;
-                row.appendChild(cellTotalFinal);
-
-                table.appendChild(row);
-            });
-
-            resultadosDiv.appendChild(table);
+        .logo {
+            width: 150px;
         }
-
-        async function exportarExcel() {
-            const fechaInicio = document.getElementById('fechaInicio').value;
-            const fechaFin = document.getElementById('fechaFin').value;
-
-            if (!fechaInicio || !fechaFin) {
-                alert('Por favor, ingrese ambas fechas.');
-                return;
-            }
-
-            try {
-                const response = await fetch(`http://localhost:3000/exportar-total-producto?fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`);
-                const blob = await response.blob();
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'reporte_total_producto.xlsx';
-                document.body.appendChild(a);
-                a.click();
-                a.remove();
-            } catch (error) {
-                console.error('Error exportando el reporte a Excel:', error);
-            }
+        .home-button {
+            background-color: #008CBA;
         }
-
-        window.onload = function() {
-            document.getElementById('generarReporte').addEventListener('click', function(event) {
-                event.preventDefault();
-                obtenerReporte();
-            });
-
-            document.getElementById('exportarExcel').addEventListener('click', function(event) {
-                event.preventDefault();
-                exportarExcel();
-            });
+        .footer {
+            color: white;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            padding: 10px 0;
+            background-color: rgba(0, 0, 0, 0.);
         }
-    </script>
+    </style>
 </head>
 <body>
+    <!-- Logo -->
+    <div class="logo-container">
+        <img src="imagenes/logo.JPG" alt="Logo" class="logo">
+    </div>
     <div class="report-container">
         <h1 class="report-header">Reporte Total por Producto</h1>
         <form class="report-form">
@@ -129,8 +50,19 @@
             <input class="report-input" type="date" id="fechaFin" name="fechaFin" required>
             <button class="report-button" id="generarReporte">Generar Reporte</button>
             <button class="report-button" id="exportarExcel">Exportar a Excel</button>
+        
+            <button class="report-button home-button" onclick="window.location.href='index.html'">Home</button>
+  
         </form>
         <div id="resultados"></div>
     </div>
+ 
+  
+    <script>
+      
+    </script>
+    <br>
+    <br>
+      <p class="footer">&copy; X Developer Team-2024</p>
 </body>
 </html>

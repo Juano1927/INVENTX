@@ -6,13 +6,14 @@ document.getElementById('Registro_Usuario').addEventListener('submit', function(
     var nombre_usuario = document.getElementById('nombre_usuario').value;
     var contrasena = document.getElementById('contrasena').value;
     var telefono_movil = document.getElementById('telefono_movil').value;
-    
+    var rol = document.getElementById('rol').value;
     var datos = {
         cedula:cedula,
         nombre: nombre,
         nombre_usuario: nombre_usuario,
         contrasena: contrasena,
         telefono_movil: telefono_movil,
+        rol:rol,
        }
 
     fetch('http://localhost:3000/guardar-datos', {

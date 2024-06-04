@@ -5,16 +5,17 @@ const cors = require('cors');
 const ExcelJS = require('exceljs');
 const app = express();
 
+app.use(express.json()); // Para parsear JSON
+app.use(express.urlencoded({ extended: true })); // Para parsear datos URL-encoded
+app.use(cors());
+
+//se crea la conexion a la base de datos
 let conexion = mysql.createConnection({
     host: "localhost",
     database: "modelo",
     user: "root",
     password: ""
 });
-
-app.use(cors());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
 
 // Obtener lista de productos
 
@@ -38,24 +39,18 @@ app.get('/usuarios', function (req, res) {
         res.json(results);
     });
 });
-
 // ruta para guardar datos de usuario
 app.post('/guardar-datos-usuario', function (req, res) {
-    const datos = req.body;
-    const cedula = datos.cedula;
-    const nombre = datos.nombre;
-    const nombre_usuario = datos.nombre_usuario;
-    const contrasena = datos.contrasena;
-    const telefono_movil = datos.telefono_movil;
+    const { cedula, nombre, nombre_usuario, contrasena, telefono_movil, rol } = req.body;
 
-    console.log(datos);
-    let insertar = `INSERT INTO usuarios (cedula, nombre, nombre_usuario, contrasena, telefono_movil) VALUES ('${cedula}', '${nombre}', '${nombre_usuario}', '${contrasena}', '${telefono_movil}');`;
+    console.log(req.body);
+    let insertar = `INSERT INTO usuarios (cedula, nombre, nombre_usuario, contrasena, telefono_movil, rol) VALUES ('${cedula}', '${nombre}', '${nombre_usuario}', '${contrasena}', '${telefono_movil}', '${rol}');`;
 
     conexion.query(insertar, function (error) {
         if (error) {
             throw error;
         } else {
-            console.log("Datos de usuario almacenados correctamente");
+            console.log("Datos de usuario almacenados correctamente.");
         }
     });
     res.json({ mensaje: 'Datos de usuario recibidos correctamente' });
@@ -72,28 +67,8 @@ app.post('/guardar-datos-producto', function (req, res) {
         if (error) {
             throw error;
         } else {
-            console.log("Datos de producto almacenados correctamente");
+            console.log("Datos de producto almacenados correctamente. ");
             res.json({ mensaje: 'Datos de producto recibidos correctamente' });
-        }
-    });
-});
-// validacion del usuario nombre de usuario vs base de datos
-app.post('/login', function (req, res) {
-    const datos = req.body;
-    const nombre_usuario = datos.nombre_usuario;
-    const contrasena = datos.contrasena;
-
-    let consultar = `SELECT * FROM usuarios WHERE nombre_usuario = '${nombre_usuario}' AND contrasena = '${contrasena}';`;
-
-    conexion.query(consultar, function (error, results) {
-        if (error) {
-            throw error;
-        }
-
-        if (results.length > 0) {
-            res.json({ valido: true });
-        } else {
-            res.json({ valido: false });
         }
     });
 });
@@ -113,15 +88,13 @@ app.post('/guardar-datos-movimiento', function (req, res) {
         if (error) {
             throw error;
         } else {
-            console.log("Datos de movimiento almacenados correctamente");
+            console.log("Datos de movimiento almacenados correctamente,OPRIMA EL BOTON HOME ");
             res.json({ mensaje: 'Datos de movimiento almacenados correctamente' });
         }
     });
 });
 
-//ruta para query de movimientos 
-
-// Nueva ruta para obtener movimientos por rango de fechas
+//  ruta para obtener movimientos por rango de fechas
 app.get('/reportes', function (req, res) {
     const { fechaInicio, fechaFin } = req.query;
     if (!fechaInicio || !fechaFin) {
@@ -152,7 +125,6 @@ app.get('/reporte-usuarios', function (req, res) {
         res.json(results);
     });
 });
-
 
 // Ruta para obtener todos los productos
 app.get('/todos-productos', function (req, res) {
@@ -230,6 +202,67 @@ app.put('/usuarios/:cedula', function (req, res) {
 });
 
 
+// Ruta para guardar datos de usuario
+app.post('/guardar-datos-usuario', function(req, res) {
+    const { cedula, nombre, nombre_usuario, contrasena, telefono_movil, rol } = req.body;
+
+    console.log(req.body);
+    let insertar = `INSERT INTO usuarios (cedula, nombre, nombre_usuario, contrasena, telefono_movil, rol) VALUES ('${cedula}', '${nombre}', '${nombre_usuario}', '${contrasena}', '${telefono_movil}', '${rol}');`;
+
+    conexion.query(insertar, function(error) {
+        if (error) {
+            throw error;
+        } else {
+            console.log("Datos de usuario almacenados correctamente,OPRIMA EL BOTON HOME ");
+            res.json({ mensaje: 'Datos de usuario recibidos correctamente' });
+        }
+    });
+});
+
+// Nueva Ruta para actualizar usuarios
+app.put('/usuarios/:cedula', function(req, res) {
+    let cedula = req.params.cedula;
+    let { nombre, nombre_usuario, telefono_movil, contrasena, rol } = req.body;
+    let actualizar = 'UPDATE usuarios SET nombre = ?, nombre_usuario = ?, telefono_movil = ?, contrasena = ?, rol = ? WHERE cedula = ?';
+    conexion.query(actualizar, [nombre, nombre_usuario, telefono_movil, contrasena, rol, cedula], function(error, results) {
+        if (error) {
+            return res.status(500).send(error.message);
+        }
+        res.sendStatus(200);
+    });
+});
+
+// Nueva Ruta para obtener lista de usuarios
+app.get('/usuarios', function(req, res) {
+    let consultar = 'SELECT cedula, nombre, nombre_usuario, telefono_movil, rol FROM usuarios';
+    conexion.query(consultar, function(error, results) {
+        if (error) {
+            throw error;
+        }
+        res.json(results);
+    });
+});
+// Ruta para validar usuarios y obtener el rol
+app.post('/login', function (req, res) {
+    const datos = req.body;
+    const nombre_usuario = datos.nombre_usuario;
+    const contrasena = datos.contrasena;
+
+    let consultar = `SELECT nombre_usuario, contrasena, rol FROM usuarios WHERE nombre_usuario = ? AND contrasena = ?;`;
+
+    conexion.query(consultar, [nombre_usuario, contrasena], function (error, results) {
+        if (error) {
+            throw error;
+        }
+
+        if (results.length > 0) {
+            const usuario = results[0];
+            res.json({ valido: true, rol: usuario.rol });
+        } else {
+            res.json({ valido: false });
+        }
+    });
+});
 //Ruta para obtener productos (/productos):
 
 app.get('/productos', function (req, res) {
@@ -496,28 +529,6 @@ app.get('/exportar-total-producto', async function (req, res) {
         res.end();
     });
 });
-/*
-
-// Ruta para obtener los productos cuya existencia total esté entre 0 y 5
-app.get('/productos-existencia', function (req, res) {
-    let consultar = `
-        SELECT p.id_producto, p.nombre_producto, SUM(m.cantidad) AS existencia_total
-        FROM productos p
-        LEFT JOIN movimientos1 m ON p.id_producto = m.id_producto
-        GROUP BY p.id_producto, p.nombre_producto
-        HAVING existencia_total BETWEEN 0 AND 5;
-    `;
-
-    conexion.query(consultar, function (error, results) {
-        if (error) {
-            console.error('Error obteniendo productos con existencia entre 0 y 5:', error);
-            return res.status(500).send('Error obteniendo productos con existencia entre 0 y 5');
-        }
-        res.json(results);
-    });
-});
-
-*/
 // Ruta para obtener los productos cuya cantidad total esté entre 0 y 5
 app.get('/productos-existencia', function (req, res) {
     let consultar = `
@@ -537,6 +548,35 @@ app.get('/productos-existencia', function (req, res) {
     });
 });
 
+// Ruta para manejar el login
+app.post('/login', (req, res) => {
+    const { nombre_usuario, contrasena } = req.body;
+
+    if (!nombre_usuario || !contrasena) {
+        return res.status(400).json({ valido: false, mensaje: 'Faltan campos por completar' });
+    }
+
+    console.log("Intentando iniciar sesión con:", nombre_usuario, contrasena);
+
+    const query = 'SELECT rol FROM usuarios WHERE nombre_usuario = ? AND contrasena = ?';
+    conexion.query(query, [nombre_usuario, contrasena], (err, results) => {
+        if (err) {
+            console.error("Error en la consulta:", err);
+            return res.status(500).json({ valido: false, mensaje: 'Error en el servidor' });
+        }
+
+        console.log("Resultados de la consulta:", results);
+
+        if (results.length > 0) {
+            const rol = results[0].rol;
+            console.log("Usuario encontrado con rol:", rol);
+            res.json({ valido: true, rol: rol });
+        } else {
+            console.log("Usuario o contraseña incorrectos");
+            res.json({ valido: false, mensaje: 'Usuario o contraseña incorrectos' });
+        }
+    });
+});
 
 app.listen(3000, function() {
     console.log('se ha conectado a la base de datos de INVENTX ,Servidor escuchando en el puerto 3000');

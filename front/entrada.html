@@ -1,146 +1,254 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Movimientos de Entrada</title>
-    <link rel="stylesheet" href="styles.css">
-    <script>
-        async function obtenerMovimientos() {
-            const fechaInicio = document.getElementById('fechaInicio').value;
-            const fechaFin = document.getElementById('fechaFin').value;
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Movimientos </title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      background-image: url('imagenes/BAR3.jpeg');
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
 
-            if (!fechaInicio || !fechaFin) {
-                alert('Por favor, ingrese ambas fechas.');
-                return;
-            }
+    .logo-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
 
-            try {
-                const response = await fetch(`http://localhost:3000/query-entrada?fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`);
-                const movimientos = await response.json();
-                mostrarMovimientos(movimientos);
-            } catch (error) {
-                console.error('Error obteniendo los movimientos de entrada:', error);
-            }
-        }
+    .logo {
+      width: 150px;
+    }
 
-        function mostrarMovimientos(movimientos) {
-            const resultadosDiv = document.getElementById('resultados');
-            resultadosDiv.innerHTML = '';
+    .report-container {
+      width: 100%;
+      max-width: 800px;
+      background-color: rgba(255, 255, 255, 0.2); 
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
 
-            if (movimientos.length === 0) {
-                resultadosDiv.innerHTML = '<p>No se encontraron movimientos de entrada en el rango de fechas proporcionado.</p>';
-                return;
-            }
+    .report-header {
+      text-align: center;
+      margin-bottom: 20px;
+      color: rgb(14, 11, 6);
+      font-weight: bold;
+    }
 
-            const table = document.createElement('table');
-            table.className = 'report-table';
+    .report-form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 20px;
+    }
 
-            const headerRow = document.createElement('tr');
-            headerRow.className = 'report-tr';
-            const headers = ['ID Producto', 'Nombre Producto', 'Cédula Usuario', 'Nombre Usuario', 'Tipo Movimiento', 'Cantidad', 'Fecha'];
-            headers.forEach(headerText => {
-                const header = document.createElement('th');
-                header.className = 'report-th';
-                header.textContent = headerText;
-                headerRow.appendChild(header);
-            });
-            table.appendChild(headerRow);
+    .report-label {
+      margin: 5px 0;
+    }
 
-            movimientos.forEach(movimiento => {
-                const row = document.createElement('tr');
-                row.className = 'report-tr';
+    .report-input {
+      margin-bottom: 10px;
+      padding: 5px;
+      width: 100%;
+      max-width: 300px;
+    }
 
-                const cellIdProducto = document.createElement('td');
-                cellIdProducto.className = 'report-td';
-                cellIdProducto.textContent = movimiento.id_producto;
-                row.appendChild(cellIdProducto);
+    .report-button {
+      margin: 5px;
+      padding: 10px 20px;
+      background-color: orange;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
 
-                const cellNombreProducto = document.createElement('td');
-                cellNombreProducto.className = 'report-td';
-                cellNombreProducto.textContent = movimiento.nombre_producto;
-                row.appendChild(cellNombreProducto);
+    .report-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
 
-                const cellCedulaUsuario = document.createElement('td');
-                cellCedulaUsuario.className = 'report-td';
-                cellCedulaUsuario.textContent = movimiento.cedula_usuario;
-                row.appendChild(cellCedulaUsuario);
+    .report-th, .report-td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
 
-                const cellNombreUsuario = document.createElement('td');
-                cellNombreUsuario.className = 'report-td';
-                cellNombreUsuario.textContent = movimiento.nombre_usuario;
-                row.appendChild(cellNombreUsuario);
+    .report-th {
+      background-color: orange;
+      color: white;
+    }
 
-                const cellTipoMovimiento = document.createElement('td');
-                cellTipoMovimiento.className = 'report-td';
-                cellTipoMovimiento.textContent = movimiento.tipo_movimiento;
-                row.appendChild(cellTipoMovimiento);
+    .report-tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
 
-                const cellCantidad = document.createElement('td');
-                cellCantidad.className = 'report-td';
-                cellCantidad.textContent = movimiento.cantidad;
-                row.appendChild(cellCantidad);
+    .report-tr:hover {
+      background-color: #ddd;
+    }
 
-                const cellFecha = document.createElement('td');
-                cellFecha.className = 'report-td';
-                cellFecha.textContent = new Date(movimiento.fecha).toLocaleString();
-                row.appendChild(cellFecha);
+    .footer {
+      text-align: center;
+      color: white;
+      margin-top: 20px;
+    }
+  </style>
+  <script>
+    async function obtenerMovimientos() {
+      const fechaInicio = document.getElementById('fechaInicio').value;
+      const fechaFin = document.getElementById('fechaFin').value;
 
-                table.appendChild(row);
-            });
+      if (!fechaInicio || !fechaFin) {
+        alert('Por favor, ingrese ambas fechas.');
+        return;
+      }
 
-            resultadosDiv.appendChild(table);
-        }
+      try {
+        const response = await fetch(`http://localhost:3000/query-entrada?fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`);
+        const movimientos = await response.json();
+        mostrarMovimientos(movimientos);
+      } catch (error) {
+        console.error('Error obteniendo los movimientos de entrada:', error);
+      }
+    }
 
-        async function exportarExcel() {
-            const fechaInicio = document.getElementById('fechaInicio').value;
-            const fechaFin = document.getElementById('fechaFin').value;
+    function mostrarMovimientos(movimientos) {
+      const resultadosDiv = document.getElementById('resultados');
+      resultadosDiv.innerHTML = '';
 
-            if (!fechaInicio || !fechaFin) {
-                alert('Por favor, ingrese ambas fechas.');
-                return;
-            }
+      if (movimientos.length === 0) {
+        resultadosDiv.innerHTML = '<p>No se encontraron movimientos de entrada en el rango de fechas proporcionado.</p>';
+        return;
+      }
 
-            try {
-                const response = await fetch(`http://localhost:3000/exportar-entrada?fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`);
-                const blob = await response.blob();
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'movimientos_entrada.xlsx';
-                document.body.appendChild(a);
-                a.click();
-                a.remove();
-            } catch (error) {
-                console.error('Error exportando el reporte a Excel:', error);
-            }
-        }
+      const table = document.createElement('table');
+      table.className = 'report-table';
 
-        window.onload = function() {
-            document.getElementById('generarReporte').addEventListener('click', function(event) {
-                event.preventDefault();
-                obtenerMovimientos();
-            });
+      const headerRow = document.createElement('tr');
+      headerRow.className = 'report-tr';
+      const headers = ['ID Producto', 'Nombre Producto', 'Cédula Usuario', 'Nombre Usuario', 'Tipo Movimiento', 'Cantidad', 'Fecha'];
+      headers.forEach(headerText => {
+        const header = document.createElement('th');
+        header.className = 'report-th';
+        header.textContent = headerText;
+        headerRow.appendChild(header);
+      });
+      table.appendChild(headerRow);
 
-            document.getElementById('exportarExcel').addEventListener('click', function(event) {
-                event.preventDefault();
-                exportarExcel();
-            });
-        }
-    </script>
+      movimientos.forEach(movimiento => {
+        const row = document.createElement('tr');
+        row.className = 'report-tr';
+
+        const cellIdProducto = document.createElement('td');
+        cellIdProducto.className = 'report-td';
+        cellIdProducto.textContent = movimiento.id_producto;
+        row.appendChild(cellIdProducto);
+
+        const cellNombreProducto = document.createElement('td');
+        cellNombreProducto.className = 'report-td';
+        cellNombreProducto.textContent = movimiento.nombre_producto;
+        row.appendChild(cellNombreProducto);
+
+        const cellCedulaUsuario = document.createElement('td');
+        cellCedulaUsuario.className = 'report-td';
+        cellCedulaUsuario.textContent = movimiento.cedula_usuario;
+        row.appendChild(cellCedulaUsuario);
+
+        const cellNombreUsuario = document.createElement('td');
+        cellNombreUsuario.className = 'report-td';
+        cellNombreUsuario.textContent = movimiento.nombre_usuario;
+        row.appendChild(cellNombreUsuario);
+
+        const cellTipoMovimiento = document.createElement('td');
+        cellTipoMovimiento.className = 'report-td';
+        cellTipoMovimiento.textContent = movimiento.tipo_movimiento;
+        row.appendChild(cellTipoMovimiento);
+
+        const cellCantidad = document.createElement('td');
+        cellCantidad.className = 'report-td';
+        cellCantidad.textContent = movimiento.cantidad;
+        row.appendChild(cellCantidad);
+
+        const cellFecha = document.createElement('td');
+        cellFecha.className = 'report-td';
+        cellFecha.textContent = new Date(movimiento.fecha).toLocaleString();
+        row.appendChild(cellFecha);
+
+        table.appendChild(row);
+      });
+
+      resultadosDiv.appendChild(table);
+    }
+
+    async function exportarExcel() {
+      const fechaInicio = document.getElementById('fechaInicio').value;
+      const fechaFin = document.getElementById('fechaFin').value;
+
+      if (!fechaInicio || !fechaFin) {
+        alert('Por favor, ingrese ambas fechas.');
+        return;
+      }
+
+      try {
+        const response = await fetch(`http://localhost:3000/exportar-entrada?fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`);
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'movimientos_entrada.xlsx';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      } catch (error) {
+        console.error('Error exportando el reporte a Excel:', error);
+      }
+    }
+
+    window.onload = function () {
+      document.getElementById('generarReporte').addEventListener('click', function (event) {
+        event.preventDefault();
+        obtenerMovimientos();
+      });
+
+      document.getElementById('exportarExcel').addEventListener('click', function (event) {
+        event.preventDefault();
+        exportarExcel();
+      });
+    }
+  </script>
 </head>
+
 <body>
-    <div class="report-container">
-        <h1 class="report-header">Movimientos de Entrada</h1>
-        <form class="report-form">
-            <label class="report-label" for="fechaInicio">Fecha Inicio:</label>
-            <input class="report-input" type="date" id="fechaInicio" name="fechaInicio" required>
-            <label class="report-label" for="fechaFin">Fecha Fin:</label>
-            <input class="report-input" type="date" id="fechaFin" name="fechaFin" required>
-            <button class="report-button" id="generarReporte">Generar Reporte</button>
-            <button class="report-button" id="exportarExcel">Exportar a Excel</button>
-        </form>
-        <div id="resultados"></div>
+  <div class="report-container">
+    <div class="logo-container">
+      <img src="imagenes/logo.JPG" alt="Logo" class="logo">
     </div>
+    <h1 class="report-header"> Movimientos </h1>
+    <form class="report-form">
+      <label class="report-label" for="fechaInicio">Fecha Inicio:</label>
+      <input class="report-input" type="date" id="fechaInicio" name="fechaInicio" required>
+      <label class="report-label" for="fechaFin">Fecha Fin:</label>
+      <input class="report-input" type="date" id="fechaFin" name="fechaFin" required>
+      <button class="report-button" id="generarReporte">Generar Reporte</button>
+      <button class="report-button" id="exportarExcel">Exportar a Excel</button>
+      <button class="btn btn-primary" onclick="window.location.href='index.html'">Home</button>
+    </form>
+    <div id="resultados"></div>
+  </div>
+  <p class="footer">&copy; X Developer Team-2024</p>
 </body>
+
 </html>

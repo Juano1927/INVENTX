@@ -15,13 +15,9 @@
     body {
       display: flex;
       align-items: center;
-      /* Alinea verticalmente al centro */
       justify-content: center;
-      /* Alinea horizontalmente al centro */
       min-height: 100vh;
-      /* Altura mínima del viewport */
       margin: 0;
-      /* Elimina los márgenes predeterminados */
       background-image: url('imagenes/BAR3.jpeg');
       background-size: cover;
       background-repeat: no-repeat;
@@ -36,7 +32,6 @@
 
     .logo {
       width: 150px;
-      /* Ajusta el tamaño según sea necesario */
     }
 
     .form-signin {
@@ -44,6 +39,23 @@
       max-width: 330px;
       padding: 15px;
       margin: auto;
+    }
+
+    .form-floating {
+      position: relative;
+      margin-bottom: 15px;
+    }
+
+    .form-floating label {
+      position: absolute;
+      top: 0;
+      left: 0;
+      padding: 10px;
+      transition: opacity 0.2s ease-in-out;
+    }
+
+    .form-floating input:not(:placeholder-shown) + label {
+      opacity: 0;
     }
   </style>
 </head>
@@ -54,70 +66,78 @@
     <div class="logo-container">
       <img src="imagenes/logo.JPG" alt="Logo" class="logo">
     </div>
-<br>
+    <br>
     <form id="loginForm">
-      <h1 class="h3 mb-3 fw-normal" style="background-color: orange; display: inline; padding: 5px;">
-        DIGITE NOMBRE DE USUARIO Y CONTRASEÑA .
+      <h1 class="h3 mb-3 fw-normal" style="background-color: orange; display: inline; padding: 2px;">
+        DIGITE NOMBRE DE USUARIO Y CONTRASEÑA.
       </h1>
-      <br>
-      <br>
+      <br><br>
       <div class="form-floating">
-        <label for="nombre_usuario">Nombre de Usuario:</label>
-        <input type="text" class="form-control" id="nombre_usuario" name="nombre_usuario" required><br>
+        <input type="text" class="form-control" id="nombre_usuario" name="nombre_usuario" placeholder=" " required>
+        <label for="nombre_usuario">Nombre de Usuario:</label><br>
       </div>
 
       <div class="form-floating">
-        <label for="contrasena">Contraseña:</label>
-        <input type="password" class="form-control" id="contrasena" name="contrasena" required><br>
+        <input type="password" class="form-control" id="contrasena" name="contrasena" placeholder=" " required>
+        <label for="contrasena">Contraseña:</label><br>
       </div>
       <div>
-        <button type="submit">Login</button>
-        <button type="submit">Login Mesero</button>s
+        <button type="submit" class="btn btn-primary">Login</button>
       </div>
-
-      <p style="color: white;">&copy; GLADYS BAR 2017-2024</p>
-
-      <script>
-        document.getElementById('loginForm').addEventListener('submit', function (event) {
-          event.preventDefault();
-          const formData = new FormData(this);
-          const data = Object.fromEntries(formData.entries());
-
-          fetch('http://localhost:3000/login', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-          })
-            .then(response => response.json())
-            .then(data => {
-              if (data.valido) {
-                window.location.href = 'inicio.html';
-              } else {
-                alert('Datos inválidos');
-              }
-            })
-            .catch(error => console.error('Error:', error));
-        });
-      </script>
+      <p style="color: white;">&copy; X Developer team-2024</p>
     </form>
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const formulario = document.querySelector('form');
-      formulario.addEventListener('submit', function (event) {
-        event.preventDefault(); // Evita que el formulario se envíe y la página se recargue
-        // Captura los valores de los campos de entrada
-        var nombre = document.getElementById('nombreInput').value;
-        var contrasena = document.getElementById('contrasenaInput').value;
-        // Muestra los valores en una alerta
-        alert('Nombre: ' + nombre + '\nContraseña: ' + contrasena);
-      });
+    document.getElementById('loginForm').addEventListener('submit', function (event) {
+      event.preventDefault(); // Evita que se recargue la página al enviar el formulario
+
+      const formData = new FormData(this); // Obtiene los datos del formulario
+      const data = Object.fromEntries(formData.entries()); // Convierte los datos a un objeto
+
+      // Envía los datos al servidor
+      fetch('http://localhost:3000/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.valido) {
+            // Si la validación es exitosa, redirecciona al usuario
+            if (data.rol === 'mesero') {
+              window.location.href = 'reportes_mesero.html'; // Redirige a la página de reportes_mesero.html
+            } else if (data.rol === 'admin') {
+              window.location.href = 'inicio.html'; // Redirige a la página de inicio.html
+            } else {
+              alert('Rol desconocido'); // En caso de un rol desconocido, muestra una alerta
+            }
+          } else {
+            alert('Datos inválidos'); // Si los datos no son válidos, muestra una alerta
+          }
+        })
+        .catch(error => console.error('Error:', error)); // Maneja errores de la solicitud
     });
+
+    function toggleLabelVisibility(inputId) {
+      const input = document.getElementById(inputId);
+      const label = document.querySelector(`label[for="${inputId}"]`);
+
+      input.addEventListener('input', function () {
+        if (this.value.length > 0) {
+          label.style.opacity = '0';
+        } else {
+          label.style.opacity = '1';
+        }
+      });
+    }
+
+    toggleLabelVisibility('nombre_usuario');
+    toggleLabelVisibility('contrasena');
   </script>
 </body>
 
